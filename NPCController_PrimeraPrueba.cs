@@ -11,7 +11,7 @@ public class NPCController : Agent
     private StarterAssetsInputs _input;
     public Transform Target;
     private ThirdPersonController _thirdPersonController;
-    private float maxStepTime = 80.0f; // Tiempo máximo por episodio en segundos
+    private float maxStepTime = 80.0f; // Max time per episode
     private Vector3 lastPosition;
     private float currentStepTime;
     private float closestDistanceToTarget;
@@ -41,7 +41,7 @@ public class NPCController : Agent
         _input.MoveInput(Vector2.zero);
         _input.LookInput(Vector2.zero);
 
-        // Reset ThirdPersonController (optional, if needed)
+        // Reset ThirdPersonController
         _thirdPersonController.enabled = false;
         _thirdPersonController.enabled = true;
 
@@ -64,7 +64,7 @@ public class NPCController : Agent
 
         // Single Raycast for detecting walls, keeping it horizontal
         float rayLength = 70f;
-        Vector3 rayOrigin = transform.position + Vector3.up * 0.2f; // Adjust height as needed
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.2f; // Adjust height
 
         // Always keep the raycast direction horizontal
         Vector3 rayDirection = new Vector3(transform.forward.x, 0, transform.forward.z).normalized;
@@ -78,17 +78,17 @@ public class NPCController : Agent
             }
             else
             {
-                sensor.AddObservation(rayLength); // No hay colisión con pared
+                sensor.AddObservation(rayLength); // No wall collision
                 //Debug.Log($"Raycast hit non-wall object at distance: {hit.distance}");
             }
         }
         else
         {
-            sensor.AddObservation(rayLength); // No hay colisión
+            sensor.AddObservation(rayLength); // No collision
             //Debug.Log("Raycast hit nothing.");
         }
 
-        // Visualizar el Raycast
+        // Raycast visualization
         Debug.DrawRay(rayOrigin, rayDirection * rayLength, Color.red);
     }
 
@@ -101,14 +101,13 @@ public class NPCController : Agent
 
         float cameraSignal = actions.ContinuousActions[2];
 
-        // Aplicar el control al controlador del personaje
         _input.MoveInput(moveSignal);
         _input.LookInput(new Vector2(cameraSignal, 0)); // Mantener el eje vertical fijo
 
         // Log the actions
         //Debug.Log($"OnActionReceived - Move Signal: {moveSignal}, Camera Signal: {cameraSignal}");
 
-        // Recompensas
+        // Rewards
         float distanceToTarget = Vector3.Distance(this.transform.position, Target.position);
         //Debug.Log($"Distance to Target: {distanceToTarget}");
 
